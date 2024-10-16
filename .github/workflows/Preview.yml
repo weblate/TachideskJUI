@@ -1,0 +1,247 @@
+name: Preview CI
+
+on:
+  push:
+    branches:
+      - preview
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  BuildBinaries:
+    name: Build application packages
+    strategy:
+      matrix:
+        runtime: [ linux-x64, osx-x64, osx-arm64, win-x64, android ]
+        include:
+          - runtime: linux-x64
+            arch: x64
+            os: ubuntu-latest
+            shell: bash
+            build: packageReleaseUberJarForCurrentOS packageReleaseDeb
+            setupCl: ./scripts/SetupClUnix.sh
+
+          - runtime: osx-x64
+            arch: x64
+            os: macOS-latest
+            shell: bash
+            build: packageReleaseUberJarForCurrentOS packageReleaseDmg notarizeReleaseDmg
+            setupCl: ./scripts/SetupClUnix.sh
+
+          - runtime: osx-arm64
+            arch: aarch64
+            os: macOS-14
+            shell: bash
+            build: packageReleaseUberJarForCurrentOS packageReleaseDmg notarizeReleaseDmg
+            setupCl: ./scripts/SetupClUnix.sh
+
+          - runtime: win-x64
+            arch: x64
+            os: windows-latest
+            shell: powershell
+            build: packageReleaseUberJarForCurrentOS packageReleaseMsi
+            setupCl: ./scripts/SetupClWindows.ps1
+
+          - runtime: android
+            arch: x64
+            os: ubuntu-latest
+            shell: bash
+            build: :android:assembleRelease
+            setupCl: ./scripts/SetupClUnix.sh
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          architecture: ${{ matrix.arch }}
+
+      - name: Set up gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Cl
+        run: ${{ matrix.setupCl }}
+
+      - name: Setup MacOS Keychain
+        uses: apple-actions/import-codesign-certs@v3
+        if: ${{ matrix.runtime == 'osx-x64' || matrix.runtime == 'osx-arm64' }}
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERT }}
+          p12-password: ${{ secrets.APPLE_CERT_PASSWORD }}
+
+      - name: Set commit count
+        shell: bash
+        run: |
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+
+      - name: Build
+        run: >
+          ./gradlew
+          ${{ matrix.build }}
+          -P"compose.desktop.mac.sign=true"
+          -P"compose.desktop.mac.signing.identity=${{ secrets.APPLE_IDENTITY }}"
+          -P"compose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}"
+          -P"compose.desktop.mac.notarization.password=${{ secrets.APPLE_PASSWORD }}"
+          -P"compose.desktop.mac.notarization.teamID=${{ secrets.APPLE_TEAM_ID }}"
+          -Ppreview="${{ env.COMMIT_COUNT }}"
+          --stacktrace
+
+      - name: Sign APK
+        uses: ilharp/sign-android-release@v1
+        if: ${{ matrix.runtime == 'android' }}
+        with:
+          releaseDir: android/build/outputs/apk/release
+          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
+          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      # Upload runner package tar.gz/zip as artifact
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-package-${{ matrix.runtime }}
+          path: |
+            desktop/build/compose/binaries/main/*/
+            desktop/build/compose/binaries/main-release/*/
+            desktop/build/compose/jars/
+            !desktop/build/compose/binaries/main/app/
+            !desktop/build/compose/binaries/main-release/app/
+            ${{ env.ANDROID_SIGNED_FILE }}
+
+        # Upload runner errors
+      - name: Upload error logs
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: runner-errors-${{ matrix.runtime }}
+          path: |
+            desktop/build/compose/logs/
+
+  BuildRpm:
+    name: Build application RPM package
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Cl
+        run: ./scripts/SetupClUnix.sh
+
+      - name: Set commit count
+        shell: bash
+        run: |
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+
+      - name: Build rpm Package
+        uses: Syer10/Fedora-Java17-Action@v1
+        with:
+          command: ./gradlew packageReleaseRpm -Ppreview="${{ env.COMMIT_COUNT }}" --stacktrace
+
+      # Upload runner package tar.gz/zip as artifact
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-package-linux-fedora-x64
+          path: |
+            desktop/build/compose/binaries/main/*/
+            desktop/build/compose/binaries/main-release/*/
+            desktop/build/compose/jars/
+            !desktop/build/compose/binaries/main/app/
+            !desktop/build/compose/binaries/main-release/app/
+
+        # Upload runner errors
+      - name: Upload error logs
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: runner-errors-linux-fedora-x64
+          path: |
+            desktop/build/compose/logs/
+
+  ReleaseBinaries:
+    name: Make a release
+    needs: [ BuildBinaries,BuildRpm ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Fix rpm java dependency
+        uses: Syer10/Fedora-Java17-Action@v1
+        with:
+          command: ./scripts/RpmDependencyFix.sh
+
+      - name: Fix deb java dependency
+        run: ./scripts/DebDependencyFix.sh
+
+      - name: Fix filenames
+        run: ./scripts/NamingFix.sh preview
+
+      - name: Get previous release
+        id: last_release
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
+        with:
+          token: ${{ github.token }}
+          excludes: "prerelease, draft"
+          owner: Suwayomi
+          repo: Suwayomi-JUI-preview
+
+      - name: Prepare build
+        run: |
+          set -e
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+          current_sha=$(git rev-parse --short HEAD)
+          echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
+          prev_commit_count=$(echo "${{ steps.last_release.outputs.release }}" | sed -e "s/^r//")
+          commit_count_diff=$(expr $commit_count - $prev_commit_count)
+          prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
+          echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
+          echo "COMMIT_LOGS<<{delimiter}
+          $(curl -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/suwayomi/suwayomi-jui/compare/$prev_release_sha...$current_sha" \
+            | jq '[.commits[]|{message:(.commit.message | split("\n")), username:.author.login}]' \
+            | jq -r '.[]|"- \(.message | first) (@\(.username))"')
+          {delimiter}" >> $GITHUB_ENV
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "*/binaries/main/*/*.*,*/binaries/main-release/*/*.*,*/jars/*.jar,*/android/build/outputs/apk/release/*.apk"
+          token: ${{ secrets.DEPLOY_PREVIEW_TOKEN }}
+          repo: Suwayomi-JUI-preview
+          tag: r${{ env.COMMIT_COUNT }}
+          name: Suwayomi-JUI Preview r${{ env.COMMIT_COUNT }}
+          body: |
+            ### Commits
+            https://github.com/Suwayomi/Suwayomi-JUI/compare/${{ env.PREV_RELEASE_SHA }}...${{ env.CURRENT_SHA }}
+
+            ${{ env.COMMIT_LOGS }}
+
+      - name: Prune old releases
+        uses: dev-drprasad/delete-older-releases@v0.3.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_PREVIEW_TOKEN }}
+        with:
+          keep_latest: 15
+          delete_tags: true
+          repo: Suwayomi/Suwayomi-JUI-preview

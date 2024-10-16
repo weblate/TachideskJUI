@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
@@ -7,44 +5,51 @@ on:
     tags:
       - v*
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   BuildBinaries:
     name: Build application packages
     strategy:
       matrix:
-        runtime: [ linux-x64, linux-centos-x64, osx-x64, win-x64 ]
+        runtime: [ linux-x64, osx-x64, osx-arm64, win-x64, android ]
         include:
-        - runtime: linux-x64
-          arch: x64
-          os: ubuntu-latest
-          shell: bash
-          buildPackage: ./scripts/BuildLinuxDeb.sh
-          buildJar: ./scripts/BuildUnixJar.sh
-          setupCl: ./scripts/SetupClUnix.sh
+          - runtime: linux-x64
+            arch: x64
+            os: ubuntu-latest
+            shell: bash
+            build: packageReleaseUberJarForCurrentOS packageReleaseDeb
+            setupCl: ./scripts/SetupClUnix.sh
 
-        - runtime: linux-centos-x64
-          arch: x64
-          os: ubuntu-latest
-          shell: bash
-          buildPackage: ./scripts/BuildLinuxRpm.sh
-          buildJar: ./scripts/BuildUnixJar.sh
-          setupCl: ./scripts/SetupClUnix.sh
+          - runtime: osx-x64
+            arch: x64
+            os: macOS-latest
+            shell: bash
+            build: packageReleaseUberJarForCurrentOS packageReleaseDmg notarizeReleaseDmg
+            setupCl: ./scripts/SetupClUnix.sh
 
-        - runtime: osx-x64
-          arch: x64
-          os: macOS-latest
-          shell: bash
-          buildPackage: ./scripts/BuildMacDmg.sh
-          buildJar: ./scripts/BuildUnixJar.sh
-          setupCl: ./scripts/SetupClUnix.sh
+          - runtime: osx-arm64
+            arch: aarch64
+            os: macOS-14
+            shell: bash
+            build: packageReleaseUberJarForCurrentOS packageReleaseDmg notarizeReleaseDmg
+            setupCl: ./scripts/SetupClUnix.sh
 
-        - runtime: win-x64
-          arch: x64
-          os: windows-latest
-          shell: powershell
-          buildPackage: ./scripts/BuildWindowsMsi.ps1
-          buildJar: ./scripts/BuildWindowsJar.ps1
-          setupCl: ./scripts/SetupClWindows.ps1
+          - runtime: win-x64
+            arch: x64
+            os: windows-latest
+            shell: powershell
+            build: packageReleaseUberJarForCurrentOS packageReleaseMsi
+            setupCl: ./scripts/SetupClWindows.ps1
+
+          - runtime: android
+            arch: x64
+            os: ubuntu-latest
+            shell: bash
+            build: :android:assembleRelease
+            setupCl: ./scripts/SetupClUnix.sh
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -52,75 +57,140 @@ jobs:
       run:
         shell: ${{ matrix.shell }}
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - uses: actions/setup-java@v1
-      if: ${{ matrix.runtime != 'linux-centos-x64' }}
-      with:
-        java-version: '15'
-        architecture: ${{ matrix.arch }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          architecture: ${{ matrix.arch }}
 
-    - name: Setup Cl
-      run: ${{ matrix.setupCl }}
+      - name: Set up gradle
+        uses: gradle/actions/setup-gradle@v4
 
-    - name: Build Package
-      if: ${{ matrix.runtime != 'linux-centos-x64' && matrix.runtime != 'osx-x64' }}
-      run: ${{ matrix.buildPackage }}
-      
-    - name: Build MacOS Package
-      if: ${{ matrix.runtime == 'osx-x64' }}
-      run: |
-        echo ${{ secrets.APPLE_CERT }} | base64 --decode > certificate.p12
-        security create-keychain -p ${{ secrets.APPLE_KEYCHAIN_PASSWORD }} build.keychain 
-        security default-keychain -s build.keychain
-        security unlock-keychain -p ${{ secrets.APPLE_KEYCHAIN_PASSWORD }} build.keychain
-        security import certificate.p12 -k build.keychain -P ${{ secrets.APPLE_CERT_PASSWORD }} -T /usr/bin/codesign
-        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${{ secrets.APPLE_KEYCHAIN_PASSWORD }} build.keychain
+      - name: Setup Cl
+        run: ${{ matrix.setupCl }}
 
-        ${{ matrix.buildPackage }} notarizeDmg \
-        -Pcompose.desktop.mac.sign=true \
-        -Pcompose.desktop.mac.signing.identity=${{ secrets.APPLE_IDENTITY }} \
-        -Pcompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }} \
-        -Pcompose.desktop.mac.notarization.password=${{ secrets.APPLE_PASSWORD }}
+      - name: Setup MacOS Keychain
+        uses: apple-actions/import-codesign-certs@v3
+        if: ${{ matrix.runtime == 'osx-x64' || matrix.runtime == 'osx-arm64' }}
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERT }}
+          p12-password: ${{ secrets.APPLE_CERT_PASSWORD }}
 
-    - name: Build Jar
-      if: ${{ matrix.runtime != 'linux-centos-x64' }}
-      run: ${{ matrix.buildJar }}
+      - name: Build
+        run: >
+          ./gradlew
+          ${{ matrix.build }}
+          -P"compose.desktop.mac.sign=true"
+          -P"compose.desktop.mac.signing.identity=${{ secrets.APPLE_IDENTITY }}"
+          -P"compose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}"
+          -P"compose.desktop.mac.notarization.password=${{ secrets.APPLE_PASSWORD }}"
+          -P"compose.desktop.mac.notarization.teamID=${{ secrets.APPLE_TEAM_ID }}"
 
-    - name: Build rpm Package
-      if: ${{ matrix.runtime == 'linux-centos-x64' }}
-      uses: Syer10/CentOS-Java15-Action@v1
-      with:
-        command: ${{ matrix.buildPackage }}
+      - name: Sign APK
+        uses: ilharp/sign-android-release@v1
+        if: ${{ matrix.runtime == 'android' }}
+        with:
+          releaseDir: android/build/outputs/apk/release
+          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
+          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
-    # Upload runner package tar.gz/zip as artifact
-    - name: Publish Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: runner-package-${{ matrix.runtime }}
-        path: |
-          build/compose/binaries/main/*/
-          build/compose/jars/
-          !build/compose/binaries/main/app/
+      # Upload runner package tar.gz/zip as artifact
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-package-${{ matrix.runtime }}
+          path: |
+            desktop/build/compose/binaries/main/*/
+            desktop/build/compose/binaries/main-release/*/
+            desktop/build/compose/jars/
+            !desktop/build/compose/binaries/main/app/
+            !desktop/build/compose/binaries/main-release/app/
+            ${{ env.ANDROID_SIGNED_FILE }}
 
-      # Upload runner errors
-    - name: Upload error logs
-      uses: actions/upload-artifact@v2
-      if: ${{ failure() }}
-      with:
-        name: runner-errors-${{ matrix.runtime }}
-        path: |
-          build/compose/logs/
+        # Upload runner errors
+      - name: Upload error logs
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: runner-errors-${{ matrix.runtime }}
+          path: |
+            desktop/build/compose/logs/
+
+  BuildRpm:
+    name: Build application RPM package
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Cl
+        run: ./scripts/SetupClUnix.sh
+
+      - name: Set commit count
+        shell: bash
+        run: |
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+
+      - name: Build rpm Package
+        uses: Syer10/Fedora-Java17-Action@v1
+        with:
+          command: ./gradlew packageReleaseRpm --stacktrace
+
+      # Upload runner package tar.gz/zip as artifact
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-package-linux-fedora-x64
+          path: |
+            desktop/build/compose/binaries/main/*/
+            desktop/build/compose/binaries/main-release/*/
+            desktop/build/compose/jars/
+            !desktop/build/compose/binaries/main/app/
+            !desktop/build/compose/binaries/main-release/app/
+
+        # Upload runner errors
+      - name: Upload error logs
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: runner-errors-linux-fedora-x64
+          path: |
+            desktop/build/compose/logs/
+
   ReleaseBinaries:
     name: Make a release
-    needs: [BuildBinaries]
+    needs: [ BuildBinaries,BuildRpm ]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download Build Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
+
+      - name: Fix rpm java dependency
+        uses: Syer10/Fedora-Java17-Action@v1
+        with:
+          command: ./scripts/RpmDependencyFix.sh
+
+      - name: Fix deb java dependency
+        run: ./scripts/DebDependencyFix.sh
+
+      - name: Fix filenames
+        run: ./scripts/NamingFix.sh
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "*/binaries/main/*/*.*,*/jars/*.jar"
+          artifacts: "*/binaries/main/*/*.*,*/binaries/main-release/*/*.*,*/jars/*.jar,*/android/build/outputs/apk/release/*.apk"
           draft: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.WINGET_PUBLISH_PAT }}

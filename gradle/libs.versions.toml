@@ -1,0 +1,217 @@
+[versions]
+# Kotlin
+kotlin = "2.0.20"
+coroutines = "1.9.0"
+
+# Serialization
+json = "1.7.3"
+
+# Compose
+composeGradle = "1.6.11"
+
+# Compose Libraries
+parcelize = "0.9.0"
+voyager = "1.0.0"
+accompanist = "0.30.1"
+googleAccompanist = "0.30.1"
+imageloader = "1.8.1"
+materialDialogs = "0.9.5"
+
+# Android
+androidGradle = "8.6.1"
+core = "1.13.1"
+appCompat = "1.7.0"
+activityCompose = "1.9.2"
+work = "2.9.1"
+
+# Android Lifecycle
+lifecycle = "2.8.6"
+
+# Swing
+darklaf = "3.0.2"
+
+# Ksp
+ksp = "2.0.20-1.0.25"
+
+# Dependency Injection
+kotlinInject = "0.7.2"
+
+# Network
+ktor = "2.3.12"
+ktorfit = "2.1.0"
+ktorfitKsp = "2.1.0-1.0.25"
+apollo = "4.0.0"
+apolloKtor = "0.0.2"
+
+# Logging
+slf4j = "2.0.16"
+log4j = "2.24.0"
+kmlogging = "1.5.0"
+
+# Storage
+okio = "3.9.1"
+appDirs = "1.2.0"
+
+# Preferences
+multiplatformSettings = "1.2.0"
+
+# Utility
+desugarJdkLibs = "2.1.2"
+aboutLibraries = "11.2.3"
+dateTime = "0.6.1"
+immutableCollections = "0.3.8"
+korge = "5.4.0"
+gradleDownloadTask = "5.6.0"
+
+# Localization
+moko = "0.24.3"
+
+# BuildConfigs
+buildconfig = "5.5.0"
+buildkonfig = "0.15.2"
+
+# Linter
+kotlinter = "4.4.1"
+
+# Version updates
+versions = "0.51.0"
+
+# Optimizer
+proguard = "7.5.0"
+
+[libraries]
+# Kotlin
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
+# Serialization
+serialization-json-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "json" }
+serialization-json-okio = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-okio", version.ref = "json" }
+
+# Compose UI
+voyager-core = { module = "cafe.adriel.voyager:voyager-core", version.ref = "voyager" }
+voyager-navigation = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+accompanist-pager = { module = "ca.gosyer:accompanist-pager", version.ref = "accompanist" }
+accompanist-pagerIndicators = { module = "ca.gosyer:accompanist-pager-indicators", version.ref = "accompanist" }
+accompanist-flowLayout = { module = "ca.gosyer:accompanist-flowlayout", version.ref = "accompanist" }
+accompanist-systemUIController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "googleAccompanist" }
+imageloader-core = { module = "io.github.qdsfdhvh:image-loader", version.ref = "imageloader" }
+imageloader-moko = { module = "io.github.qdsfdhvh:image-loader-extension-moko-resources", version.ref = "imageloader" }
+materialDialogs-core = { module = "ca.gosyer:compose-material-dialogs-core", version.ref = "materialDialogs" }
+materialDialogs-datetime = { module = "ca.gosyer:compose-material-dialogs-datetime", version.ref = "materialDialogs" }
+
+# Android
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "core" }
+androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-work = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+
+# Android Lifecycle
+lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "lifecycle" }
+lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
+lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+
+# Swing
+darklaf = { module = "com.github.weisj:darklaf-core", version.ref = "darklaf" }
+
+# Dependency Injection
+kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
+kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
+
+# Network
+ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-okHttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib-light", version.ref = "ktorfit" }
+ktorfit-ksp = { module = "de.jensklingenberg.ktorfit:ktorfit-ksp", version.ref = "ktorfitKsp" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
+apollo-engine-ktor = { module = "com.apollographql.ktor:apollo-engine-ktor", version.ref = "apolloKtor" }
+
+# Logging
+logging-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+logging-slf4j-jul = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
+logging-log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+logging-log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+logging-log4j-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
+logging-kmlogging = { module = "org.lighthousegames:logging", version.ref = "kmlogging" }
+
+# Storage
+appDirs = { module = "ca.gosyer:kotlin-multiplatform-appdirs", version.ref = "appDirs" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+
+# Preferences
+multiplatformSettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+multiplatformSettings-serialization = { module = "com.russhwolf:multiplatform-settings-serialization", version.ref = "multiplatformSettings" }
+multiplatformSettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
+
+# Utility
+desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+aboutLibraries-ui = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "aboutLibraries" }
+dateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
+immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
+korge-foundation = { module = "com.soywiz.korge:korge-foundation", version.ref = "korge" }
+
+# Localization
+moko-core = { module = "dev.icerock.moko:resources", version.ref = "moko" }
+moko-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko" }
+moko-parcelize = { module = "dev.icerock.moko:parcelize", version.ref = "parcelize" }
+
+# Optimizer
+proguard = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
+
+# Gradle
+gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-android = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
+gradle-download-task = { module = "de.undercouch:gradle-download-task", version.ref = "gradleDownloadTask" }
+
+[plugins]
+# Kotlin
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+# Android
+android-library = { id = "com.android.library", version.ref = "androidGradle" }
+android-application = { id = "com.android.application", version.ref = "androidGradle" }
+
+# Compose
+compose = { id = "org.jetbrains.compose", version.ref = "composeGradle" }
+
+# Ksp
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+# Network
+ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+
+# Localization
+moko-gradle = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko" }
+
+# BuildConfigs
+buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
+
+# Linter
+kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+
+# Version updates
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+
+# Utility
+aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
+
+[bundles]
+compose-android = [
+]
