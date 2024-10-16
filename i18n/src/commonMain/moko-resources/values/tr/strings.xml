@@ -213,4 +213,5 @@
     <string name="max_width_sub">Resmin maksimum genişliği. Şu anda %1$d dp. Yukarıdaki ayar resimleri belirtilen genişlik kadar olacak şekilde büyütür</string>
     <string name="theme_midnight_dusk">Gece karanlığı</string>
     <string name="obsolete">Geçersiz</string>
+    <string name="action_ok">Tamam</string>
 </resources>
