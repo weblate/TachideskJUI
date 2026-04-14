@@ -228,7 +228,6 @@
     <string name="date_system_default">Du système par défaut</string>
     <string name="host_settings_sub">Les paramètres ci-dessous configurent le serveur Suwayomi interne</string>
     <string name="dir_down">De haut en bas</string>
-    <string name="host_basic_auth_sub">Utiliser l\'authentification basique pour protéger votre bibliothèque, nécessite un nom d\'utilisateur et un mot de passe</string>
     <string name="host_download_path_sub_empty">Utilisation du répertoire de téléchargement par défaut</string>
     <string name="server_preference_warning">Avertissement</string>
     <string name="grid_columns">Colonnes</string>
@@ -271,8 +270,6 @@
 \n %1$s</string>
     <string name="nav_prev_chapter">Chapitre précédent</string>
     <string name="basic_auth">Authentification basique</string>
-    <string name="host_basic_auth_username">Nom d\'utilisateur d\'authentification basique</string>
-    <string name="host_basic_auth_password">Mot de passe d\'authentification basique</string>
     <string name="update_check_no_new_updates">Pas de nouvelle mise à jour disponible</string>
     <string name="server_proxy">Accès proxy au serveur</string>
     <string name="confirm_exit_toast">Pressez encore pour quitter</string>

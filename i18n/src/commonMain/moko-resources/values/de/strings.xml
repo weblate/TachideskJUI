@@ -80,13 +80,11 @@
     <string name="display_badges">Abzeichen</string>
     <string name="action_bookmark">Lesezeichen hinzufügen</string>
     <string name="action_filter_bookmarked">Lesezeichen hinzugefügt</string>
-    <string name="host_basic_auth_username">Einfacher Authentifizierungsnutzername</string>
     <string name="auth_username">Auth Nutzername</string>
     <string name="auth_password">Auth Kennwort</string>
     <string name="confirm_exit_message">Willst du die App wirklich schließen\?</string>
     <string name="theme_amoled">AMOLED</string>
     <string name="group_updates_channel_app">App Aktualisierungen</string>
-    <string name="host_basic_auth_password">Einfaches Authentifizierungspasswort</string>
     <string name="theme">Thema</string>
     <string name="theme_follow_system">Systemeinstellungen folgen</string>
     <string name="grid_size">Größe</string>
@@ -172,7 +170,6 @@
     <string name="host_download_path_sub">Aktueller Download-Pfad: %1$s</string>
     <string name="host_debug_logging">Server Debug-Protokolle</string>
     <string name="host_socks_port_sub">Aktueller Proxy PORT: %1$s</string>
-    <string name="host_basic_auth_sub">Einfache Authentifikation nutzen um die Bibliothek zu schützen, benötigt Nutzername und Passwort</string>
     <string name="host_open_in_browser">Server-WebUI beim Start öffnen</string>
     <string name="host_webui_sub">Ob die WebUI des Servers aktiviert ist, entscheidet ob du Suwayomi im Browser verwenden kannst</string>
     <string name="host_webui">Server-WebUI</string>

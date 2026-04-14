@@ -122,8 +122,6 @@
     <string name="auth_password">Authenticatie wachtwoord</string>
     <string name="auth_username">Authenticatie gebruikersnaam</string>
     <string name="basic_auth">Basisverificatie</string>
-    <string name="host_basic_auth_password">Basisverificatie wachtwoord</string>
-    <string name="host_basic_auth_username">Basisverificatie gebruikersnaam</string>
     <string name="update_checker">Controleer op updates</string>
     <string name="host_socks_host_sub">Huidige Proxy HOST: %1$s</string>
     <string name="host_socks_port_sub">Huidige Proxy PORT: %1$s</string>
@@ -153,7 +151,6 @@
     <string name="host_settings">Suwayomi-Server instellingen</string>
     <string name="host_settings_sub">The onderstaande instellingen configureren de interne Suwayomi-Server</string>
     <string name="server_preference_warning_sub">The onderstaande instellingen vereisen een herstart om effect te hebben</string>
-    <string name="host_basic_auth_sub">Gebruik basisverificatie om je bibliotheek te beschermen, vereist gebruikersnaam en wachtwoord</string>
     <string name="host_system_tray_sub">Gebruik het taakbalk icoon om te kijken of de server actief is</string>
     <string name="server_preference_warning">Waarschuwing</string>
     <string name="host_webui_sub">Als de servers standaard WebUI is ingeschakeld kun je Suwayomi in je browser gebruiken</string>
