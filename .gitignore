@@ -7,6 +7,8 @@ build/
 *.settings.xml
 tmp/
 Tachidesk.jar
+/wix311
+.kotlin
 
 # Eclipse
 .classpath
@@ -20,5 +22,21 @@ bin/
 *.iws
 /.idea/*
 !/.idea/runConfigurations/
+!/.idea/scopes
+!/.idea/copyright
 out/
 workspace.xml
+/local.properties
+
+# XCode
+xcuserdata
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
