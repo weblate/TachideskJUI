@@ -44,8 +44,6 @@
     <string name="host_socks_port_sub">Proxy PORT attuale: %1$s</string>
     <string name="host_ip_sub">Server IP attuale: %1$s</string>
     <string name="host_port_sub">Server PORT attuale: %1$s</string>
-    <string name="host_basic_auth_password">Password Basic Auth</string>
-    <string name="host_basic_auth_username">Username Basic Auth</string>
     <string name="http_port">PORTA HTTP</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string name="no_auth">Nessun autenticazione</string>
@@ -111,7 +109,6 @@
     <string name="color_secondary_sub">Accento per alcune parti dell\'interfaccia</string>
     <string name="reset_filters">Reimposta</string>
     <string name="max_size_unrestricted">Illimitato</string>
-    <string name="host_basic_auth_sub">Usa autenticazione di base per proteggere la tua libreria, richiede nome utente e password</string>
     <string name="server_preference_warning">Attenzione</string>
     <string name="host_webui_sub">Abilita la WebUI predefinita del server, ti permette di utilizzare Suwayomi nel browser</string>
     <string name="backup_restore">Ripristina Backup</string>

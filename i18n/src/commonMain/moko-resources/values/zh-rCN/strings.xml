@@ -188,7 +188,6 @@
     <string name="action_search">搜索</string>
     <string name="location_global_search">全局搜索</string>
     <string name="in_library">在收藏夹中</string>
-    <string name="host_basic_auth_username">基本认证用户名</string>
     <string name="server_path_prefix">服务器路径前缀</string>
     <string name="grid_size">大小</string>
     <string name="status_completed">已完结</string>
@@ -226,9 +225,7 @@
     <string name="discord">Discord</string>
     <string name="host_download_path_sub_empty">使用默认下载路径</string>
     <string name="host_download_path_sub">当前下载路径：%1$s</string>
-    <string name="host_basic_auth_password">基本认证密码</string>
     <string name="open_source_licenses">开源许可证</string>
-    <string name="host_basic_auth_sub">使用基本认证来保护您的收藏夹，需要用户名和密码</string>
     <string name="clear_image_cache">清除图片缓存</string>
     <string name="clear_chapter_cache">清除章节缓存</string>
     <string name="clear_cache_sub">已使用：%1$s</string>

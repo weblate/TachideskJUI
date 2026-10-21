@@ -133,8 +133,6 @@
     <string name="nav_edge">Cạnh</string>
     <string name="nav_left_right">Phải và Trái</string>
     <string name="disabled">Disabled</string>
-    <string name="host_basic_auth_password">Mật khẩu xác thực cơ bản</string>
-    <string name="host_basic_auth_username">Tên người dùng</string>
     <string name="host_download_path_sub_empty">Sử dụng đường dẫn tải xuống mặc định</string>
     <string name="host_open_in_browser">Mở Server WebUI khi khởi động</string>
     <string name="host_webui">Server WebUI</string>
@@ -205,7 +203,6 @@
     <string name="host_open_in_browser_sub">Mở WebUI bên trong trình duyệt của bạn khi khởi động máy chủ. Yêu cầu bật WebUI</string>
     <string name="group_downloader">Trình tải xuống</string>
     <string name="downloader_running">Trình tải xuống đang chạy</string>
-    <string name="host_basic_auth_sub">Sử dụng xác thực cơ bản để bảo vệ thư viện của bạn, yêu cầu tên người dùng và mật khẩu</string>
     <string name="chapter_downloading_progress">Đang tải... (%1$d/%2$d)</string>
     <string name="server_preference_warning_sub">Các cài đặt dưới đây yêu cầu khởi động lại để có hiệu lực</string>
     <string name="move_to_browse">Duyệt</string>

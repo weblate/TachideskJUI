@@ -144,10 +144,8 @@
     <string name="clear_image_cache">Limpiar caché de imágenes</string>
     <string name="channel_active">Activo</string>
     <string name="group_updates_channel_app">Actualizaciones de la App</string>
-    <string name="host_basic_auth_username">Usuario para autenticación normal</string>
     <string name="theme_amoled">AMOLED</string>
     <string name="auth_username">Usuario de autenticación</string>
-    <string name="host_basic_auth_password">Clave de autenticación normal</string>
     <string name="location_about">Acerca de</string>
     <string name="display_badges">Insignias</string>
     <string name="auth_password">Clave de autorización</string>
@@ -213,7 +211,6 @@
     <string name="no_proxy">Sin Proxy</string>
     <string name="host_open_in_browser">Abrir servidor WebUI al iniciar</string>
     <string name="host_open_in_browser_sub">Abrir WebUI dentro del navegador al empezar el servidor. Requiere que WebUI este habilitado</string>
-    <string name="host_basic_auth_sub">Usa la autenticación normal para proteger tu biblioteca, Requiere usuario y contraseña</string>
     <string name="group_downloader">Descargador</string>
     <string name="authentication">Autenticación del servidor</string>
     <string name="digest_auth">Autenticación digest</string>
