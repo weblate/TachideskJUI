@@ -52,7 +52,6 @@
     <string name="display_compact">Kompakt ızgara</string>
     <string name="grid_columns">Sütunlar</string>
     <string name="host_port_sub">Şu anki sunucu PORT\'u: %1$s</string>
-    <string name="host_basic_auth_password">Basit doğrulama şifresi</string>
     <string name="backup_ttl_sub">Spesifik yedek kaç gün boyunca tutulsun , kapatmak için 0\'ı seçin</string>
     <string name="adaptive">Adaptif</string>
     <string name="dir_up">Aşağıdan yukarıya</string>
@@ -80,7 +79,6 @@
     <string name="theme_dark">Siyah</string>
     <string name="theme_follow_system">Sistem ayarlarını takip et</string>
     <string name="host_ip_sub">Şu anki sunucu IP\'si: %1$s</string>
-    <string name="host_basic_auth_username">Basit doğrulama kullanıcı ismi</string>
     <string name="host_download_as_cbz">"CBZ  olarak indir"</string>
     <string name="host_download_as_cbz_sub">Bölümleri CBZ arşivleri olarak indir</string>
     <string name="group_updates_channel_ext">Eklenti güncellemeleri</string>
@@ -213,4 +211,5 @@
     <string name="max_width_sub">Resmin maksimum genişliği. Şu anda %1$d dp. Yukarıdaki ayar resimleri belirtilen genişlik kadar olacak şekilde büyütür</string>
     <string name="theme_midnight_dusk">Gece karanlığı</string>
     <string name="obsolete">Geçersiz</string>
+    <string name="action_ok">Tamam</string>
 </resources>
